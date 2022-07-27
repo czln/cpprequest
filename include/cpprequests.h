@@ -8,7 +8,7 @@
 #include <curl/curl.h>
 #include <string>
 #include <unordered_map>
-#include <utility>
+//#include <utility>
 #include <functional>
 #include <memory>
 #include <vector>
@@ -256,7 +256,18 @@ namespace requests {
     }
 
 
+    enum E_REQ_STATUS {
+        E_REQ_SUCCESS,
+        E_REQ_ERROR,
+        E_REQ_CANCEL,
+    };
 
+    E_REQ_STATUS get_status(uint code) {
+        if (code >= 200 && code < 300)
+            return E_REQ_SUCCESS;
+        /// \todo other status return
+        return E_REQ_ERROR;
+    }
 
 } // namespace requests
 
