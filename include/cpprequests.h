@@ -15,68 +15,74 @@
 #include <future>
 
 #include "utils.h"
+#include "string_container_base.h"
 
 
 
 namespace requests {
 /// \note if there're multiple  key-val with the same key, the val will be joined together,
 /// since the header already separated by \c "\\r\\n"
-    struct  Header {
-    private:
-        std::unordered_map<std::string, std::string> map_;
-        std::string text_; ///< original plain text
-    public:
-//    class iterator {
-//        using map_t = std::unordered_map<std::string, std::string>;
+//    struct  Header {
 //    private:
-//        map_t &map_;
+//        std::unordered_map<std::string, std::string> map_;
+//        std::string text_; ///< original plain text
 //    public:
-//        iterator(map_t& map) : map_(map) {}
-//        bool operator== (const iterator& other) {
-//            return map_ == other.map_;
+//        explicit Header(const std::string& str = "") :text_(str) {
+//            add(str);
 //        }
-//        iterator& operator++() {
-//
+//        std::string operator[](const std::string& key) {
+//            ///< so that map_ will match the text_
+//            if (map_.find(key) == map_.end())
+//                return {};
+//            return map_[key];
+//        }
+////    Header& operator+ (const std::string& data) {
+////        text_
+////        return *this;
+////    }
+//        Header& operator+= (const std::string& data) {
+//            text_ += data;
+//            add(data);
+//            return *this;
+//        }
+//        auto begin() {return map_.begin();}
+//        auto end() {return map_.end();}
+//        const char* data() noexcept{ return text_.data(); }
+//        size_t size() const noexcept { return text_.size(); }
+//    private:
+//        void add(const std::string& data) {
+//            if (!data.empty() && data.find(':') != std::string::npos) {
+//#if __cplusplus > 201700L
+//                auto [ key,  val] = utils::separate(data, ':');
+//#else
+//                auto pair = utils::separate(data, ':');
+//                auto key = pair.first, val = pair.second;
+//#endif
+//                if (map_.find(key) == map_.end()) {
+//                    map_.emplace(key, val);
+//                } else {
+//                    map_[key] += val; ///< separated by \c "\r\n"
+//                }
+//            }
 //        }
 //    };
-        explicit Header(const std::string& str = "") :text_(str) {
-            add(str);
-        }
-        std::string operator[](const std::string& key) {
-            ///< so that map_ will match the text_
-            if (map_.find(key) == map_.end())
-                return {};
-            return map_[key];
-        }
-//    Header& operator+ (const std::string& data) {
-//        text_
-//        return *this;
-//    }
-        Header& operator+= (const std::string& data) {
-            text_ += data;
-            add(data);
-            return *this;
-        }
+    struct Header: public StringContainerBase<Header>{
+    private:
+        std::unordered_map<std::string, std::string> map_;
+    public:
+        Header() = default;
+        Header(const char* data) : StringContainerBase<Header>(data) {}
+        Header(const char* data, size_t n) : StringContainerBase<Header>(std::string{data, n}) {}
+        Header(const std::string& data) : StringContainerBase<Header>(data) {}
+
+        Header(const Header& other) = default;
+        Header& operator= (const Header& other) = default;
+
+        Header(Header&& other) noexcept = default;
+        Header& operator= (Header&& other) noexcept = default;
+
         auto begin() {return map_.begin();}
         auto end() {return map_.end();}
-        const char* data() noexcept{ return text_.data(); }
-        size_t size() const noexcept { return text_.size(); }
-    private:
-        void add(const std::string& data) {
-            if (!data.empty() && data.find(':') != std::string::npos) {
-#if __cplusplus > 201700L
-                auto [ key,  val] = utils::separate(data, ':');
-#else
-                auto pair = utils::separate(data, ':');
-                auto key = pair.first, val = pair.second;
-#endif
-                if (map_.find(key) == map_.end()) {
-                    map_.emplace(key, val);
-                } else {
-                    map_[key] += val; ///< separated by \c "\r\n"
-                }
-            }
-        }
     };
     struct Response {
         struct  Text {};
@@ -85,22 +91,24 @@ namespace requests {
         Text    text;
     };
 
-    class Url {
-    private:
-        std::string data_;
-    public:
-        explicit Url(std::string url = ""): data_(std::move(url)) {}
-        explicit operator std::string() const {
-            return data_;
-        }
-        const char* data() noexcept {return data_.data();}
+    struct Url: public StringContainerBase<Url>{
+        Url() = default;
+        Url(const char* data) : StringContainerBase<Url>(data) {}
+        Url(const char* data, size_t n) : StringContainerBase<Url>(std::string{data, n}) {}
+        Url(const std::string& data) : StringContainerBase<Url>(data) {}
+
+        Url(const Url& other) = default;
+        Url& operator= (const Url& other) = default;
+
+        Url(Url&& other) noexcept = default;
+        Url& operator= (Url&& other) noexcept = default;
     };
 
     class Verbose {
     private:
         bool enable_;
     public:
-        explicit Verbose(const bool enable = false) : enable_(enable) {}
+        Verbose(const bool enable = false) : enable_(enable) {}
         explicit operator bool() const {
             return enable_;
         }
