@@ -4,6 +4,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(cpprequest)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(CURL REQUIRED)
@@ -15,6 +19,9 @@ message(STATUS "build shared: ${BUILD_SHARED_LIB}")
 
 option(BUILD_EXAMPLE "enable to build example code" ON)
 message(STATUS "build examples: ${BUILD_EXAMPLE}")
+
+option(UNIT_TESTS "enable unit tests build and check" ON)
+message(STATUS "unit tests: ${UNIT_TESTS}")
 
 #set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 ## static library output path
@@ -33,6 +40,9 @@ endif()
 if (BUILD_EXAMPLE)
     add_subdirectory(examples)
 endif ()
+if (UNIT_TESTS)
+    add_subdirectory(unit_tests)
+endif()
 
 if (NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install)

@@ -7,6 +7,6 @@
 
 #include "../cpprequests.h"
 #include "../utils.h"
-#include "../string_container_base.h"
+#include "../containers.h"
 
 #endif //CPPREQUEST_REQUESTS_H

@@ -15,7 +15,7 @@
 #include <future>
 
 #include "utils.h"
-#include "string_container_base.h"
+#include "containers.h"
 
 
 
@@ -66,24 +66,24 @@ namespace requests {
 //            }
 //        }
 //    };
-    struct Header: public StringContainerBase<Header>{
-    private:
-        std::unordered_map<std::string, std::string> map_;
-    public:
-        Header() = default;
-        Header(const char* data) : StringContainerBase<Header>(data) {}
-        Header(const char* data, size_t n) : StringContainerBase<Header>(std::string{data, n}) {}
-        Header(const std::string& data) : StringContainerBase<Header>(data) {}
-
-        Header(const Header& other) = default;
-        Header& operator= (const Header& other) = default;
-
-        Header(Header&& other) noexcept = default;
-        Header& operator= (Header&& other) noexcept = default;
-
-        auto begin() {return map_.begin();}
-        auto end() {return map_.end();}
-    };
+//    struct Header: public StringContainerBase<Header>{
+//    private:
+//        std::unordered_map<std::string, std::string> map_;
+//    public:
+//        Header() = default;
+//        Header(const char* data) : StringContainerBase<Header>(data) {}
+//        Header(const char* data, size_t n) : StringContainerBase<Header>(std::string{data, n}) {}
+//        Header(const std::string& data) : StringContainerBase<Header>(data) {}
+//
+//        Header(const Header& other) = default;
+//        Header& operator= (const Header& other) = default;
+//
+//        Header(Header&& other) noexcept = default;
+//        Header& operator= (Header&& other) noexcept = default;
+//
+//        auto begin() {return map_.begin();}
+//        auto end() {return map_.end();}
+//    };
     struct Response {
         struct  Text {};
         uint    status_code{};
@@ -202,7 +202,7 @@ namespace requests {
         void setup_callback() {
             if (!header_callback_) {
                 header_callback_ = std::make_unique<OnDataCallbackBase>([this](const std::string& data) {
-                    header_ += data;
+//                    header_ += data;
                     return data.size();
                 });
             }
